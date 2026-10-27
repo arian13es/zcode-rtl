@@ -48,37 +48,37 @@
         .zcode-rtl-widget-panel.open { transform: scale(1); opacity: 1; pointer-events: auto; }
         
         .zcode-rtl-theme-panel { 
-            background-color: var(--color-card, var(--color-popover, #1c1c1c)); 
-            color: var(--color-foreground, #ededed); 
-            border: 1px solid var(--color-border, rgba(128,128,128,0.25)); 
+            background: rgba(24, 24, 27, 0.95) !important; 
+            color: #f4f4f5 !important; 
+            border: 1px solid rgba(255, 255, 255, 0.12) !important; 
             padding: 16px 20px; 
             border-radius: 12px; 
             width: 290px; 
-            box-shadow: 0 16px 40px rgba(0,0,0,0.6); 
+            box-shadow: 0 16px 40px rgba(0,0,0,0.65) !important; 
             max-height: 80vh; overflow-y: auto; 
             backdrop-filter: blur(16px);
         }
         
         .zcode-rtl-theme-input { 
-            background-color: var(--color-surface, rgba(128,128,128,0.12)); 
-            color: var(--color-foreground, #ededed); 
-            border: 1px solid var(--color-border, rgba(128,128,128,0.2)); 
+            background-color: rgba(255, 255, 255, 0.08) !important; 
+            color: #f4f4f5 !important; 
+            border: 1px solid rgba(255, 255, 255, 0.15) !important; 
             padding: 6px 8px; border-radius: 6px; 
             width: 140px; font-size: 12px; 
             outline: none; transition: border-color 0.2s; 
         }
         .zcode-rtl-theme-input:focus { 
-            border-color: var(--color-brand, #38bdf8); 
+            border-color: #38bdf8 !important; 
         }
         
         .zcode-rtl-toggle-btn-reset { 
-            background: var(--color-surface-hover, rgba(121, 121, 121, 0.35)); 
+            background: rgba(121, 121, 121, 0.35) !important; 
             border: none; border-radius: 14px; 
             width: 44px; height: 24px; position: relative; 
             cursor: pointer; transition: background 0.3s; flex-shrink: 0; 
         }
         .zcode-rtl-toggle-btn-reset.active { 
-            background: var(--color-brand, #0284c7); 
+            background: #0284c7 !important; 
         }
         .zcode-rtl-toggle-knob { 
             background: #fff; border-radius: 50%; 
@@ -91,26 +91,44 @@
         .zcode-rtl-row { 
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 14px; padding-bottom: 12px; 
-            border-bottom: 1px solid var(--color-border, rgba(128,128,128,0.12)); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
         }
         .zcode-rtl-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .zcode-rtl-label { font-size: 13px; font-weight: 500; opacity: 0.9; }
         
         .zcode-rtl-widget-trigger { 
             width: 46px; height: 46px; border-radius: 50%; 
-            background: var(--color-brand, #0284c7); 
-            color: #ffffff; 
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important; 
+            color: #ffffff !important; 
             display: flex; align-items: center; justify-content: center; 
-            cursor: grab; box-shadow: 0 4px 16px rgba(0,0,0,0.4); 
-            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s; 
+            cursor: grab; 
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.45), 0 2px 6px rgba(0,0,0,0.3) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s !important; 
             touch-action: none;
         }
         .zcode-rtl-widget-trigger:active { cursor: grabbing; }
-        .zcode-rtl-widget-trigger:hover { transform: scale(1.08); filter: brightness(1.1); }
+        .zcode-rtl-widget-trigger:hover { 
+            transform: scale(1.08); 
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6), 0 2px 8px rgba(0,0,0,0.4) !important; 
+        }
         .zcode-rtl-widget-trigger svg { transition: transform 0.3s; pointer-events: none; }
         .zcode-rtl-widget-panel.open ~ .zcode-rtl-widget-trigger svg { transform: rotate(90deg); }
 
-        /* CRITICAL BIDI ISOLATION FOR INLINE CODE & MONOSPACE */
+        /* NATIVE BIDIRECTIONAL ENGINE FOR PROMPT INPUT / LEXICAL (ZERO DOM MUTATION) */
+        [data-lexical-editor="true"],
+        [contenteditable="true"],
+        .chat-composer-input-surface [contenteditable="true"] {
+            unicode-bidi: plaintext !important;
+            text-align: start !important;
+        }
+        [data-lexical-editor="true"] p,
+        [contenteditable="true"] p {
+            unicode-bidi: plaintext !important;
+            text-align: start !important;
+        }
+
+        /* CRITICAL BIDI ISOLATION FOR INLINE CODE, TERMINALS & MONOSPACE */
         code,
         kbd,
         samp,
@@ -252,7 +270,7 @@
         svg.setAttribute('height', '24');
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.setAttribute('fill', 'none');
-        svg.setAttribute('stroke', 'currentColor');
+        svg.setAttribute('stroke', '#ffffff');
         svg.setAttribute('stroke-width', '2');
         svg.setAttribute('stroke-linecap', 'round');
         svg.setAttribute('stroke-linejoin', 'round');
@@ -526,13 +544,13 @@
         panel.appendChild(createRow('Fix @ Sign', atBtn));
 
         const footer = document.createElement('div');
-        footer.style.cssText = 'margin-top:20px; text-align:center; font-size:12px; opacity:0.8; border-top:1px solid var(--color-border, rgba(128,128,128,0.2)); padding-top:12px; font-family:sans-serif;';
+        footer.style.cssText = 'margin-top:20px; text-align:center; font-size:12px; opacity:0.8; border-top:1px solid rgba(255, 255, 255, 0.1); padding-top:12px; font-family:sans-serif;';
         
         const footerText = document.createTextNode('Developed by ');
         const githubLink = document.createElement('a');
         githubLink.href = 'https://github.com/arian13es';
         githubLink.textContent = 'Arian';
-        githubLink.style.cssText = 'color:var(--color-brand, #38bdf8); text-decoration:none; font-weight:bold; cursor:pointer;';
+        githubLink.style.cssText = 'color:#38bdf8 !important; text-decoration:none; font-weight:bold; cursor:pointer;';
         
         footer.appendChild(footerText);
         footer.appendChild(githubLink);
@@ -615,7 +633,11 @@
                 if (['CODE', 'PRE', 'KBD', 'SAMP', 'VAR', 'SCRIPT', 'STYLE'].includes(tag)) {
                     return NodeFilter.FILTER_REJECT;
                 }
-                if (parent.closest('pre, code, .xterm, .terminal-xterm-shell, .monaco-editor, .cm-editor, [data-code-block], .bg-markdown-inline-code, .katex')) {
+                if (parent.closest('pre, code, .xterm, .terminal-xterm-shell, [class*="terminal"], .monaco-editor, .cm-editor, [data-code-block], .bg-markdown-inline-code, .katex')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                // Strictly exclude the prompt composer and Lexical editor from DOM text walker
+                if (parent.closest('[data-lexical-editor], [contenteditable="true"], .chat-composer-region, .chat-composer-input-surface, [class*="composer"]')) {
                     return NodeFilter.FILTER_REJECT;
                 }
                 return NodeFilter.FILTER_ACCEPT;
@@ -650,23 +672,19 @@
     function updateDir() {
         if (!isRTL) return;
         
-        // Target BLOCK-level containers and editable inputs in ZCode
+        // Target BLOCK-level containers in ZCode assistant & user messages
+        // CRITICAL: NEVER include the chat composer or Lexical editor in DOM mutation queries!
         const blockElements = document.querySelectorAll(`
-            p, 
-            li, 
-            h1, h2, h3, h4, h5, h6, 
-            blockquote, 
-            textarea, 
-            [contenteditable="true"], 
-            input[type="text"],
-            div.prose,
-            .prose *,
-            [class*="trajectory-assistant"],
-            [class*="trajectory-user"],
-            [class*="message"],
-            [class*="bubble"],
-            [class*="composer"],
-            [class*="prompt"]
+            div.prose p, 
+            div.prose li, 
+            div.prose h1, div.prose h2, div.prose h3, div.prose h4, div.prose h5, div.prose h6, 
+            div.prose blockquote,
+            [class*="trajectory-assistant"] p,
+            [class*="trajectory-assistant"] li,
+            [class*="trajectory-user"] p,
+            [class*="trajectory-user"] li,
+            .history-message p,
+            .history-message li
         `);
 
         for (let i = 0; i < blockElements.length; i++) {
@@ -675,22 +693,12 @@
             // Ignore widget elements
             if (el.closest('.zcode-rtl-widget-container')) continue;
 
+            // Strictly ignore the chat composer and any rich text editor
+            if (el.closest('[data-lexical-editor], [contenteditable="true"], .chat-composer-region, .chat-composer-input-surface, [class*="composer"]')) continue;
+
             // Ignore code blocks, Monaco, terminals
             if (el.closest('pre, code, .xterm, .terminal-xterm-shell, [class*="terminal"], .monaco-editor, .cm-editor, [data-code-block], .bg-markdown-inline-code')) continue;
             if (['PRE', 'CODE'].includes(el.tagName)) continue;
-
-            // For input / textarea / contenteditable
-            if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' || el.getAttribute('contenteditable') === 'true') {
-                const val = el.value || el.textContent || '';
-                const clean = val.replace(/[\u200B-\u200F\uFEFF]/g, '').trim();
-                const dir = determineDirection(clean);
-                if (el.getAttribute('dir') !== dir) {
-                    el.setAttribute('dir', dir);
-                    el.style.setProperty('text-align', dir === 'rtl' ? 'right' : 'left', 'important');
-                    el.style.setProperty('direction', dir, 'important');
-                }
-                continue;
-            }
 
             // For text blocks (p, li, headings, etc.)
             const cleanText = getCleanText(el);
@@ -707,24 +715,23 @@
                 el.style.setProperty('text-align', dir === 'rtl' ? 'right' : 'left', 'important');
                 el.style.setProperty('direction', dir, 'important');
                 el.style.setProperty('unicode-bidi', 'isolate', 'important');
-
-                // If inside a message bubble/container, align the container as well
-                const bubble = el.closest('[class*="message"], [class*="bubble"], [class*="prompt"], [class*="trajectory-"]');
-                if (bubble && bubble.getAttribute('dir') !== dir) {
-                    bubble.setAttribute('dir', dir);
-                }
             }
         }
     }
-
-    document.addEventListener('input', updateDir, { capture: true });
     
     let updateDirRAF = null;
     const observer = new MutationObserver((mutations) => {
         if (!isRTL) return;
         let needsUpdate = false;
         for (let i = 0; i < mutations.length; i++) {
-            if (mutations[i].addedNodes.length > 0 || mutations[i].type === 'characterData') {
+            const mut = mutations[i];
+            // Skip mutations originating inside the chat composer to eliminate re-renders and composition state locks
+            if (mut.target && mut.target.nodeType === Node.ELEMENT_NODE) {
+                if (mut.target.closest('[data-lexical-editor], [contenteditable="true"], .chat-composer-region, .chat-composer-input-surface, [class*="composer"]')) {
+                    continue;
+                }
+            }
+            if (mut.addedNodes.length > 0 || mut.type === 'characterData') {
                 needsUpdate = true;
                 break;
             }
@@ -747,7 +754,7 @@
 
     setInterval(() => {
         if (isRTL) updateDir();
-    }, 1500);
+    }, 2000);
 
     document.addEventListener('keydown', (e) => {
         if (e.altKey && e.code === 'KeyR') { 
@@ -760,6 +767,6 @@
                 document.execCommand('insertText', false, '@');
             }
         }
-    }, { capture: true });
+    });
 
 })();
