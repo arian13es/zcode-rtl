@@ -42,6 +42,7 @@ printBanner();
 const args = process.argv.slice(2);
 const isRestore = args.includes('--restore');
 const isHelp = args.includes('--help') || args.includes('-h');
+const isAutoYes = args.includes('-y') || args.includes('--yes');
 
 if (isHelp) {
     console.log(`
@@ -49,6 +50,7 @@ Usage: zcode-rtl [options]
 
 Options:
   --restore     Revert ZCode to its original factory state from backup
+  -y, --yes     Automatically close running ZCode instances without prompting
   --help, -h    Display this help menu
 `);
     process.exit(0);
@@ -303,13 +305,17 @@ async function main() {
 
     if (checkRunningProcesses()) {
         console.log(yellow('\n[!] Notice: ZCode is currently running.'));
-        const response = await prompts({
-            type: 'confirm',
-            name: 'closeApp',
-            message: 'Would you like to close ZCode now to prevent file locks?',
-            initial: true
-        });
-        if (response && response.closeApp) {
+        let closeApp = isAutoYes;
+        if (!isAutoYes) {
+            const response = await prompts({
+                type: 'confirm',
+                name: 'closeApp',
+                message: 'Would you like to close ZCode now to prevent file locks?',
+                initial: true
+            });
+            closeApp = response && response.closeApp;
+        }
+        if (closeApp) {
             try {
                 if (os.platform() === 'win32') {
                     execSync('taskkill /IM ZCode.exe /F', { stdio: 'ignore' });

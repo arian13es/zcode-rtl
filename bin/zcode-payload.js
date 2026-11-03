@@ -182,6 +182,82 @@
             unicode-bidi: isolate !important;
         }
 
+        /* Headings in RTL */
+        [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+        h1[dir="rtl"], h2[dir="rtl"], h3[dir="rtl"], h4[dir="rtl"], h5[dir="rtl"], h6[dir="rtl"] {
+            text-align: right !important;
+            direction: rtl !important;
+            unicode-bidi: isolate !important;
+        }
+
+        /* Tables in RTL */
+        table[dir="rtl"],
+        [dir="rtl"] table,
+        [data-markdown-table-frame][dir="rtl"] table {
+            direction: rtl !important;
+        }
+
+        [data-markdown-table-frame][dir="rtl"] {
+            direction: rtl !important;
+        }
+
+        table[dir="rtl"] th,
+        table[dir="rtl"] td,
+        [dir="rtl"] table th,
+        [dir="rtl"] table td,
+        [data-markdown-table-frame][dir="rtl"] th,
+        [data-markdown-table-frame][dir="rtl"] td,
+        th[dir="rtl"],
+        td[dir="rtl"] {
+            direction: rtl !important;
+            text-align: right !important;
+            unicode-bidi: isolate !important;
+        }
+
+        table[dir="rtl"] th[align="center"],
+        table[dir="rtl"] td[align="center"],
+        [dir="rtl"] table th[align="center"],
+        [dir="rtl"] table td[align="center"] {
+            text-align: center !important;
+        }
+
+        table[dir="rtl"] th[align="left"],
+        table[dir="rtl"] td[align="left"],
+        [dir="rtl"] table th[align="left"],
+        [dir="rtl"] table td[align="left"] {
+            text-align: left !important;
+        }
+
+        /* Lists in RTL */
+        ul[dir="rtl"],
+        ol[dir="rtl"],
+        [dir="rtl"] ul,
+        [dir="rtl"] ol {
+            direction: rtl !important;
+            text-align: right !important;
+            padding-right: 1.5rem !important;
+            padding-left: 0 !important;
+        }
+
+        li[dir="rtl"],
+        [dir="rtl"] li {
+            direction: rtl !important;
+            text-align: right !important;
+            unicode-bidi: isolate !important;
+        }
+
+        /* Blockquotes in RTL */
+        blockquote[dir="rtl"],
+        [dir="rtl"] blockquote {
+            direction: rtl !important;
+            text-align: right !important;
+            unicode-bidi: isolate !important;
+            border-right: 3px solid rgba(128, 128, 128, 0.4) !important;
+            border-left: none !important;
+            padding-right: 0.75rem !important;
+            padding-left: 0 !important;
+        }
+
         [dir="ltr"] {
             text-align: left !important;
             direction: ltr !important;
@@ -228,16 +304,23 @@
             [dir="rtl"] h2,
             [dir="rtl"] h3,
             [dir="rtl"] h4,
+            [dir="rtl"] h5,
+            [dir="rtl"] h6,
+            [dir="rtl"] table,
+            [dir="rtl"] th,
+            [dir="rtl"] td,
             [dir="rtl"] span,
             [dir="rtl"] a,
             [dir="rtl"] blockquote {
                 font-family: ${faFontName}, ${enFontStr}var(--font-sans, ui-sans-serif), "Segoe UI Emoji", sans-serif !important;
             }
 
-            .zcode-rtl-text-node,
-            [dir="rtl"],
+            p[dir="rtl"],
             [dir="rtl"] p,
-            [dir="rtl"] li {
+            li[dir="rtl"],
+            [dir="rtl"] li,
+            td[dir="rtl"],
+            [dir="rtl"] td {
                 font-size: ${fs}px !important;
                 line-height: ${lh} !important;
             }
@@ -592,7 +675,7 @@
             } else {
                 const s = document.getElementById('zcode-rtl-dynamic-style');
                 if (s) s.remove();
-                document.querySelectorAll('.zcode-rtl-text-node').forEach(el => {
+                document.querySelectorAll('.zcode-rtl-text-node, table, [data-markdown-table-frame], ul, ol').forEach(el => {
                     el.removeAttribute('dir');
                     el.style.removeProperty('text-align');
                     el.style.removeProperty('direction');
@@ -659,32 +742,31 @@
         const faCount = faMatches.length;
         const enCount = enMatches.length;
 
-        if (faCount > 0) {
-            if (faCount >= enCount * 0.4 || faCount >= 3) {
-                return 'rtl';
-            }
-            const firstChar = cleanText.match(/[A-Za-z\u0600-\u06FF]/);
-            return firstChar && /[\u0600-\u06FF]/.test(firstChar[0]) ? 'rtl' : 'ltr';
+        if (faCount === 0) return 'ltr';
+        if (enCount === 0) return 'rtl';
+
+        // If Persian characters represent a substantial portion (>= 35%)
+        if (faCount >= enCount * 0.35) {
+            return 'rtl';
         }
-        return 'ltr';
+
+        // Check the first letter of the text
+        const firstLetter = cleanText.match(/[A-Za-z\u0600-\u06FF]/);
+        return firstLetter && /[\u0600-\u06FF]/.test(firstLetter[0]) ? 'rtl' : 'ltr';
     }
 
     function updateDir() {
         if (!isRTL) return;
         
-        // Target BLOCK-level containers in ZCode assistant & user messages
+        // Target block-level elements in chat, streamdown markdown, and tables
         // CRITICAL: NEVER include the chat composer or Lexical editor in DOM mutation queries!
         const blockElements = document.querySelectorAll(`
-            div.prose p, 
-            div.prose li, 
-            div.prose h1, div.prose h2, div.prose h3, div.prose h4, div.prose h5, div.prose h6, 
-            div.prose blockquote,
-            [class*="trajectory-assistant"] p,
-            [class*="trajectory-assistant"] li,
-            [class*="trajectory-user"] p,
-            [class*="trajectory-user"] li,
-            .history-message p,
-            .history-message li
+            p, 
+            h1, h2, h3, h4, h5, h6, 
+            li, 
+            blockquote, 
+            table, 
+            summary
         `);
 
         for (let i = 0; i < blockElements.length; i++) {
@@ -696,11 +778,31 @@
             // Strictly ignore the chat composer and any rich text editor
             if (el.closest('[data-lexical-editor], [contenteditable="true"], .chat-composer-region, .chat-composer-input-surface, [class*="composer"]')) continue;
 
-            // Ignore code blocks, Monaco, terminals
-            if (el.closest('pre, code, .xterm, .terminal-xterm-shell, [class*="terminal"], .monaco-editor, .cm-editor, [data-code-block], .bg-markdown-inline-code')) continue;
-            if (['PRE', 'CODE'].includes(el.tagName)) continue;
+            // Ignore code blocks, Monaco, terminals, math formulas
+            if (el.closest('pre, code, .xterm, .terminal-xterm-shell, [class*="terminal"], .monaco-editor, .cm-editor, [data-code-block], .bg-markdown-inline-code, .katex')) continue;
+            if (['PRE', 'CODE', 'INPUT', 'TEXTAREA', 'BUTTON', 'SELECT'].includes(el.tagName)) continue;
 
-            // For text blocks (p, li, headings, etc.)
+            // Inside tables: don't individually flip <p> inside cells; table layout governs them uniformly
+            if (el.tagName !== 'TABLE' && el.closest('table')) continue;
+
+            // Special handling for tables
+            if (el.tagName === 'TABLE') {
+                const cleanText = getCleanText(el);
+                if (!cleanText) continue;
+                const dir = determineDirection(cleanText);
+                if (el.getAttribute('dir') !== dir) {
+                    el.setAttribute('dir', dir);
+                    el.style.setProperty('direction', dir, 'important');
+                }
+                const frame = el.closest('[data-markdown-table-frame]');
+                if (frame && frame.getAttribute('dir') !== dir) {
+                    frame.setAttribute('dir', dir);
+                    frame.style.setProperty('direction', dir, 'important');
+                }
+                continue;
+            }
+
+            // For text blocks (p, li, headings, blockquote, summary)
             const cleanText = getCleanText(el);
             if (!cleanText) continue;
 
@@ -715,6 +817,14 @@
                 el.style.setProperty('text-align', dir === 'rtl' ? 'right' : 'left', 'important');
                 el.style.setProperty('direction', dir, 'important');
                 el.style.setProperty('unicode-bidi', 'isolate', 'important');
+
+                // If this is an RTL list item, also align its parent list container
+                if (el.tagName === 'LI' && dir === 'rtl') {
+                    const parentList = el.closest('ul, ol');
+                    if (parentList && parentList.getAttribute('dir') !== 'rtl') {
+                        parentList.setAttribute('dir', 'rtl');
+                    }
+                }
             }
         }
     }
